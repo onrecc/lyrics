@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lyrics Scroller</title>
+  <style>
+    body {
+        background-color: black;
+        color: #F8F8F8; /* Not pure white, but close */
+        font-size: 4em; /* Make the text bigger */
+        font-family: Arial, sans-serif; /* Change the font */
+        font-weight: bold; /* Make the text bolder */
+        display: flex;  /* Center the lyrics vertically and horizontally */
+        justify-content: center;
+        align-items: center;
+        margin: 0;      /* Remove default margin */
+        padding: 0;     /* Remove default padding */
+        overflow: hidden; /* Hide scrollbars */
+    }
+
+    #lyrics {
+        text-align: center; /* Center the lyrics horizontally */
+        line-height: 1.5;   /* Increase line spacing */
+    }
+
+    .line {
+      transition: color 0.5s ease, font-size 0.5s ease;
+      opacity: 0.5; /* Make the text lighter */
+      font-size: 0.8em; /* Make the text smaller */
+    }
+
+    .highlighted {
+      transition: color 0.5s ease, font-size 0.5s ease;
+      opacity: 1; /* Make the text darker */
+      font-size: 1.2em; /* Make the text larger */
+    }
+  </style>
+</head>
+<body>
+  <div id="lyrics">
+    <div id="line1" class="line">Korvatunturilla</div>
+    <div id="line2" class="line">Tontut ahkeroi,</div>
+    <div id="line3" class="line">Lastut lentää pajasta ja</div>
+    <div id="line4" class="line">Vannesaha soi.</div>
+    <div id="line5" class="line">Me ollaan:</div>
+    <div id="line6" class="line">Joulupukin töissä</div>
+    <div id="line7" class="line">Joulupukin töissä</div>
+    <div id="line8" class="line">Joulupukin töissä</div>
+    <div id="line9" class="line">Täällä jokainen</div>
+    <div id="line10" class="line">Me ollaan:</div>
+    <div id="line11" class="line">Joulupukin töissä</div>
+    <div id="line12" class="line">Joulupukin töissä</div>
+    <div id="line13" class="line">Joulupukin töissä</div>
+    <div id="line14" class="line">Täällä jokainen</div>
+    <div id="line15" class="line">Viime hetkeen saakka</div>
+    <div id="line16" class="line">On kaikki hajalla,</div>
+    <div id="line17" class="line">Mutta lahja jokainen</div>
+    <div id="line18" class="line">Valmistuu ajallaan</div>
+    <div id="line19" class="line">Me ollaan:</div>
+    <div id="line20" class="line">Joulupukin töissä</div>
+    <div id="line21" class="line">Joulupukin töissä</div>
+    <div id="line22" class="line">Joulupukin töissä</div>
+    <div id="line23" class="line">Täällä jokainen</div>
+    <div id="line24" class="line">Me ollaan:</div>
+    <div id="line25" class="line">Joulupukin töissä</div>
+    <div id="line26" class="line">Joulupukin töissä</div>
+    <div id="line27" class="line">Joulupukin töissä</div>
+    <div id="line28" class="line">Täällä jokainen</div>
+    <div id="line29" class="line">Aaton alla aina</div>
+    <div id="line30" class="line">On kiire hirmuinen</div>
+    <div id="line31" class="line">Silti työtä hauskempaa</div>
+    <div id="line32" class="line">Voi kuvitella en</div>
+    <div id="line33" class="line">Me ollaan:</div>
+    <div id="line34" class="line">Joulupukin töissä</div>
+    <div id="line35" class="line">Joulupukin töissä</div>
+    <div id="line36" class="line">Joulupukin töissä</div>
+    <div id="line37" class="line">Täällä jokainen</div>
+    <div id="line38" class="line">Me ollaan:</div>
+    <div id="line39" class="line">Joulupukin töissä</div>
+    <div id="line40" class="line">Joulupukin töissä</div>
+    <div id="line41" class="line">Joulupukin töissä</div>
+    <div id="line42" class="line">Täällä jokainen</div>
+    <div id="line43" class="line">Me ollaan:</div>
+    <div id="line44" class="line">Joulupukin töissä</div>
+    <div id="line45" class="line">Joulupukin töissä</div>
+    <div id="line46" class="line">Joulupukin töissä</div>
+    <div id="line47" class="line">Täällä jokainen</div>
+    <div id="line48" class="line">Me ollaan:</div>
+    <div id="line49" class="line">Joulupukin töissä</div>
+    <div id="line50" class="line">Joulupukin töissä</div>
+    <div id="line51" class="line">Joulupukin töissä</div>
+    <div id="line52" class="line">Täällä jokainen</div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let currentLine = 1; // Start with the first line
+    let previousLine = 1;
+
+    function highlightLine(line) {
+      // Remove highlight from the current line
+      const currentElement = document.getElementById('line' + previousLine);
+      currentElement.classList.remove('highlighted');
+      currentElement.classList.add('line');
+
+      // Add highlight to the new line
+      currentLine = line;
+      const newElement = document.getElementById('line' + currentLine);
+      newElement.classList.remove('line');
+      newElement.classList.add('highlighted');
+
+      // Scroll the new line into view
+      newElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      previousLine = currentLine;
+    }
+
+    // Highlight the first line initially
+    highlightLine(currentLine);
+
+    window.addEventListener('keydown', (event) => {
+      const totalLines = document.getElementById('lyrics').children.length; // Get the total number of lines
+
+      if (event.key === 'ArrowUp' && currentLine > 1) {
+        currentLine = currentLine - 1;
+        highlightLine(currentLine);
+        socket.emit('highlight', currentLine);
+        console.log('up'+ currentLine)
+      } else if (event.key === 'ArrowDown' && currentLine < totalLines) {
+        currentLine = currentLine + 1;
+        highlightLine(currentLine);
+        socket.emit('highlight', currentLine);
+        console.log('down'+ currentLine)
+      }
+    });
+
+    socket.on('highlight', (line) => {
+      highlightLine(line);
+      currentLine = line;
+    });
+  </script>
+</body>
+</html>
