@@ -6,12 +6,19 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(express.static('public'));
+app.use(express.static('public', { extensions: ['html'] }));
 
 io.on('connection', (socket) => {
   socket.on('highlight', (line) => {
     socket.broadcast.emit('highlight', line);
     console.log('highlight', line);
+  });
+});
+
+io.on('connection', (socket) => {
+  socket.on('juhlayo', (line) => {
+    socket.broadcast.emit('juhlayo', line);
+    console.log('juhlayo', line);
   });
 });
 

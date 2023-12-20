@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lyrics Scroller</title>
+  <style>
+    body {
+        background-color: black;
+        color: #F8F8F8; /* Not pure white, but close */
+        font-size: 4em; /* Make the text bigger */
+        font-family: Arial, sans-serif; /* Change the font */
+        font-weight: bold; /* Make the text bolder */
+        display: flex;  /* Center the lyrics vertically and horizontally */
+        justify-content: center;
+        align-items: center;
+        margin: 0;      /* Remove default margin */
+        padding: 0;     /* Remove default padding */
+        padding-bottom: 50px;
+        overflow: hidden; /* Hide scrollbars */
+    }
+
+    #lyrics {
+        text-align: center; /* Center the lyrics horizontally */
+        line-height: 1.5;   /* Increase line spacing */
+    }
+
+    .line {
+      transition: color 0.5s ease, font-size 0.5s ease;
+      opacity: 0.5; /* Make the text lighter */
+      font-size: 1.1em; /* Make the text smaller */
+    }
+
+    .highlighted {
+      transition: color 0.5s ease, font-size 0.5s ease;
+      opacity: 1; /* Make the text darker */
+      font-size: 2em; /* Make the text larger */
+    }
+  </style>
+</head>
+<body>
+  <div id="lyrics">
+    <div id="line1" class="line">Jouluyö, juhlayö!</div>
+    <div id="line2" class="line">Päättynyt kaik on työ.</div>
+    <div id="line3" class="line">Kaks vain valveil on puolisoa</div>
+    <div id="line4" class="line">lapsen herttaisen nukkuessa</div>
+    <div id="line5" class="line">Seimikätkyessään,</div>
+    <div id="line6" class="line">Seimikätkyessään.</div>
+    <div id="line7" class="line">Jouluyö, juhlayö!</div>
+    <div id="line8" class="line">Paimenil yksin työ.</div>
+    <div id="line9" class="line">Enkel taivaasta ilmoitti heill':</div>
+    <div id="line10" class="line">Suuri koittanut riemu on teill'</div>
+    <div id="line11" class="line">Kristus syntynyt on! Jouluyö, juhlayö.</div>
+    <div id="line12" class="line">Täytetty nyt on työ.</div>
+    <div id="line13" class="line">Olkoon kunnia Jumalalle!</div>
+    <div id="line14" class="line">Maassa rauha, myös ihmisille</div>
+    <div id="line15" class="line">Viime hetkeen saakka</div>
+    <div id="line16" class="line">On kaikki hajalla,</div>
+    <div id="line17" class="line">Olkoon suosio suur',</div>
+    <div id="line18" class="line">Olkoon suosio suur!</div>
+  </div>
+  <script src="https://cdn.socket.io/4.2.0/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+    let currentLine = 1; // Start with the first line
+    let previousLine = 1;
+
+    function highlightLine(line) {
+      // Remove highlight from the current line
+      const currentElement = document.getElementById('line' + previousLine);
+      currentElement.classList.remove('highlighted');
+      currentElement.classList.add('line');
+
+      // Add highlight to the new line
+      currentLine = line;
+      const newElement = document.getElementById('line' + currentLine);
+      newElement.classList.remove('line');
+      newElement.classList.add('highlighted');
+
+      // Scroll the new line into view
+      newElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      previousLine = currentLine;
+    }
+
+    // Highlight the first line initially
+    highlightLine(currentLine);
+
+    window.addEventListener('keydown', (event) => {
+      const totalLines = document.getElementById('lyrics').children.length; // Get the total number of lines
+
+      if (event.key === 'ArrowUp' && currentLine > 1) {
+        currentLine = currentLine - 1;
+        highlightLine(currentLine);
+        socket.emit('juhlayo', currentLine);
+        console.log('up'+ currentLine)
+      } else if (event.key === 'ArrowDown' && currentLine < totalLines) {
+        currentLine = currentLine + 1;
+        highlightLine(currentLine);
+        socket.emit('juhlayo', currentLine);
+        console.log('down'+ currentLine)
+      } else if (event.key === ' ' && currentLine < totalLines) {
+        currentLine = currentLine + 1;
+        highlightLine(currentLine);
+        socket.emit('juhlayo', currentLine);
+        console.log('down'+ currentLine)
+      } else if (event.key === 'y') {
+        window.location.href = "/jouluyo";
+      } else if (event.key === 'p') {
+        window.location.href = "/";
+      } else if (event.key === 'r') {
+        window.location.href = "/joulupuuonrakennettu";
+      }
+    });
+
+    socket.on('jouluyo', (line) => {
+      highlightLine(line);
+      currentLine = line;
+    });
+  </script>
+</body>
+</html>
